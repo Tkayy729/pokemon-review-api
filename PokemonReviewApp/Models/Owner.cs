@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokemonReviewApp.Models
 {
-	[Table("Owners")]
+
 	public class Owner
 	{
 		public int Id { get; set; }

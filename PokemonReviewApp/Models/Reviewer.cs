@@ -2,7 +2,6 @@
 
 namespace PokemonReviewApp.Models
 {
-	[Table("Reviewers")]
 	public class Reviewer
 	{
 		public int Id { get; set; }

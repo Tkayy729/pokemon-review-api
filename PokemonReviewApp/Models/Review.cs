@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokemonReviewApp.Models
 {
-	[Table("Reviews")]
 	public class Review
 	{
 		public int Id { get; set; }
