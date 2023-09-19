@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Dto;
 using PokemonReviewApp.interfaces;
 using PokemonReviewApp.Models;
 
@@ -8,22 +10,57 @@ namespace PokemonReviewApp.Controllers;
 [ApiController]
 public class PokemonController: Controller
 {
-    private readonly IPokemonRepository _iPokemonRepository;
+    private readonly IPokemonRepository _pokemonRepository;
+    private readonly IMapper _mapper;
     
-    public PokemonController(IPokemonRepository pokemonRepository)
+    public PokemonController(IPokemonRepository pokemonRepository, IMapper mapper)
     {
-        _iPokemonRepository = pokemonRepository;
+        _pokemonRepository = pokemonRepository;
+        _mapper = mapper;
     }
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     public IActionResult GetPokemons()
     {
-        var pokemons = _iPokemonRepository.GetPokemons();
+        var pokemons = _mapper.Map<List<PokemonDTO>>(_pokemonRepository.GetPokemons()); 
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         return Ok(pokemons);
+    }
+    
+    [HttpGet("{pokeId}")]
+    [ProducesResponseType(200, Type = typeof(Pokemon))]
+    [ProducesResponseType(400)]
+    public IActionResult GetPokemon(int pokeId)
+    {
+        if (!_pokemonRepository.PokemonExists(pokeId))
+            NotFound();
+        
+        var pokemon =_mapper.Map<PokemonDTO>(_pokemonRepository.GetPokemon(pokeId));
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Ok(pokemon);
+    }
+    
+    [HttpGet("{pokeId}/rating")]
+    [ProducesResponseType(200,Type = typeof(decimal))]
+    [ProducesResponseType(400)]
+    public IActionResult GetPokemonRating(int pokeId)
+    {
+        if (!_pokemonRepository.PokemonExists(pokeId))
+            NotFound();
+        
+        decimal rating = _pokemonRepository.GetPokemonRating(pokeId);
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+
+        return Ok(rating);
     }
 }
